@@ -1,5 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import googleIconImg from '../../assets/images/google-icon.svg';
 import illustrationImg from '../../assets/images/illustration.svg';
 import logoImg from '../../assets/images/logo.svg';
@@ -31,12 +33,12 @@ export function Home () {
     const roomRef = await database.ref(`rooms/${roomCode}`).get();
 
     if (!roomRef.exists()) {
-      alert('Room does not exists.');
+      toast.error('Room does not exists.');
       return;
     }
 
     if (roomRef.val().endedAt) {
-      alert('Room already closed.');
+      (toast.info('Room already closed.'));
       return;
     }
 
@@ -46,6 +48,7 @@ export function Home () {
 
   return (
     <div id='page-auth'>
+    <ToastContainer />
       <aside>
         <img src={illustrationImg} alt="Ilustração simbolizando perguntas e respostas" />
         <strong>Crie salas de Q&A ao-vivo</strong>

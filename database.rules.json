@@ -1,0 +1,25 @@
+{
+  "rules": {
+		"rooms": {
+      ".read": false,
+        ".write": "auth != null",
+          "$roomId": {
+            ".read": true,
+            // essa regra só é valida (na edição) se a pergunta já existir = data.exists();
+            // se a pergunta não existir ainda ele vai deixar criar a pergunta;
+            // se a pergunta existir ele vai cair no "ou" (||) e fazer a verificação
+            ".write": "auth != null && (!data.exists() || data.child('authorId').val() == auth.id)",
+            "questions" : {
+              ".read": true,
+                // editar, apenas quem criou a sala e não a pergunta.
+                // dps que o usuário cria a pergunta ele não pode alterá-la
+              ".write": "auth != null && (!data.exists() ||  data.parent().child('authorId').val() == auth.id)",
+              "likes" : {
+                ".read": true,
+                ".write": "auth != null && (!data.exists() || data.child('authorId').val() == auth.id)",
+              }
+            }
+          }
+    }
+  }
+}

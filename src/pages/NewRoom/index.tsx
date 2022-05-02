@@ -26,7 +26,7 @@ export function NewRoom () {
     })
 
     // key = id que foi inserido na sala automáticamente pelo Firebase
-    navigate(`/rooms/${firebaseRoom.key}`)
+    navigate(`/admin/rooms/${firebaseRoom.key}`)
   }
 
   return (
