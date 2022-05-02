@@ -7,6 +7,7 @@ import { Room } from './pages/Room';
 
 
 export function App() {
+  
   return (
     <BrowserRouter>
       <AuthContextProvider>

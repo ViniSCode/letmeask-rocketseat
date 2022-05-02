@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import answerImg from '../../assets/images/answer.svg';
 import checkImg from '../../assets/images/check.svg';
@@ -6,9 +7,11 @@ import logoImg from '../../assets/images/logo.svg';
 import { Button } from '../../components/Button';
 import { Question } from '../../components/Question';
 import { RoomCode } from '../../components/RoomCode';
+import { useAuth } from '../../hooks/useAuth';
 import { useRoom } from '../../hooks/useRoom';
 import { database } from '../../services/firebase';
 import '../Room/styles.scss';
+import './styles.scss';
 
 
 type RoomParams = { 
@@ -16,7 +19,8 @@ type RoomParams = {
 }
 
 export function AdminRoom () {
-  // const { user } = useAuth();
+  const [adminId, setAdminId] = useState("");
+  const { user } = useAuth();
   const params = useParams<RoomParams>();
   const roomId = params.id!;
   const { questions, title } = useRoom(roomId);
@@ -42,13 +46,22 @@ export function AdminRoom () {
     })
   }
 
+  useEffect( () => {
+      const fetchData = async () => {
+        const { authorId } = await (await database.ref(`rooms/${roomId}`).get()).val();
+        setAdminId(authorId);
+      }
+          
+      fetchData();
+  }, []);
+
   async function handleHighlightQuestion (questionId: string) {
     await database.ref(`rooms/${roomId}/questions/${questionId}`).update({ 
       isHighlighted: true,
     })
   }
-
-  return (
+  
+  return adminId === user?.id ? (
     <div id="page-room">
       <header>
         <div className="content">
@@ -104,10 +117,14 @@ export function AdminRoom () {
                     <img src={deleteImg} alt="Remover pergunta" />
                   </button>
                 </Question>
-              );
+              )
           })}
         </div>
       </main>
     </div>
-  );
+  ) : (
+    <div className="permission-denied">
+      <h1>You don't have permission to access this page</h1>
+    </div>
+  )
 }
